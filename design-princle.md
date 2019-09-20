@@ -27,9 +27,9 @@
 
 一个类不应该依赖它不需要的接口，即一个类对另一个类的依赖应该建立在最小的接口上。
 
-### 示例
+**示例**
 
-![示例](./asset/imgs/单一职责1.png) 
+![接口隔离示例](./asset/imgs/单一职责1.png) 
 
 ```java
 /**
@@ -150,7 +150,7 @@ public class B {
 
 将 IOperation 接口拆分成几个独立的接口，类 A 和类 B 分别与它们需要的接口建立依赖关系,也就是采用接口隔离原则。
 
-![改进](./asset/imgs/单一职责2.png)
+![接口隔离改进](./asset/imgs/单一职责2.png)
 
 ```java
 /**
@@ -270,6 +270,73 @@ public class B {
 4. 依赖倒置原则是基于这样的设计理念：相对细节的多变性，抽象的东西要稳定的多，故以抽象为基础搭建的架构比以细节为基础搭建的架构要稳定的多。在 Java 中，抽象是指接口或者抽象类，细节就是具体的实现类。
 5. 使用接口或抽象类的目的是制定好规范，而不涉及具体的操作，把展现细节的任务交给它们的实现类进行完成。
 
+**示例**
+
+Person 类发送消息的功能。
+![依赖倒置示例](./asset/imgs/依赖倒置1.png)
+
+```java
+/**
+ * Person
+ */
+public class Person {
+
+    public void send(Email email) {
+        System.out.println(email.getMessage());
+    }
+}
+
+/**
+ * Email
+ */
+public class Email {
+
+    public String getMessage() {
+        return "message";
+    }
+}
+```
+
+上述方案简单，比较容易想到。但是，如果我们发送的对象是微信，短信等等，则新增类，同时 Person 也要增加相应的发送方法，这样对类的改动就比较大。 
+
+**根据依赖倒置原则改进**  
+
+解决思路：引入一个抽象的接口 ISend 来表示发送者，这样 Person 类与接口 ISend 发生依赖，其次 Email，WeiXin 等属于发送的范畴，它们各自实现 ISend 接口,这样就符合依赖倒转原则。
+
+![依赖倒置改进](./asset/imgs/依赖倒置2.png)
+
+```java
+/**
+ * ISend
+ */
+public interface ISend {
+
+    String getMessage();
+}
+
+/**
+ * Email
+ */
+public class Email implements ISend {
+
+    @Override
+    public String getMessage() {
+        return "Email message";
+    }
+}
+
+/**
+ * Person
+ */
+public class Person {
+
+    public void send(ISend send) {
+        System.out.println(send.getMessage());
+    }
+}
+
+```
+
 **依赖倒置的注意事项和细节**
 
 - 低层模块尽量都要有接口或抽象类，或者两者都有，这样程序的稳定性更好。
@@ -306,7 +373,7 @@ public class B {
 
 1. 一个对象应该对其他对象保持最少的了解。  
 2. 类与类关系越密切，耦合度越大。
-3. 迪米特法则(Demeter Principle)又叫**最少知道原则**，即一个类对自己依赖的类知道的越少越好。也就是说，对于被依赖的类不管多么复杂，都尽量将逻辑封装在类的内部。对外除了提供的public方法，不对外泄露任何信息。  
+3. 迪米特法则(Demeter Principle)又叫**最少知道原则**，即一个类对自己依赖的类知道的越少越好。也就是说，对于被依赖的类不管多么复杂，都尽量将逻辑封装在类的内部。对外除了提供的 public 方法，不对外泄露任何信息。  
 4. 迪米特法则还有个更简单的定义:只与直接的朋友通信。
 5. **直接的朋友**：每个对象都会与其他对象有耦合关系，只要两个对象之间有耦合关系，我们就说这两个对象之间是朋友关系。耦合的方式很多，依赖，关联，组合，聚合等。其中，我们称出现成员变量，方法参数，方法返回值中的类为直接的朋友，而出现在局部变量中的类不是直接的朋友。也就是说，陌生的类最好不要以局部变量的形式出现在类的内部。
 
