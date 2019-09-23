@@ -321,7 +321,16 @@ public class Email implements ISend {
 
     @Override
     public String getMessage() {
-        return "Email message";
+        return "Email message.";
+    }
+}
+
+
+public class WeiXin implements ISend {
+
+    @Override
+    public String getMessage() {
+        return "WeiXin message.";
     }
 }
 
@@ -363,19 +372,162 @@ public class Person {
 2. 继承在给程序带来便利的同时，也带来了弊端。使用继承会给程序带来侵入性，程序的可移植性降低，增加了程序间的耦合性；如果一个类被其他类所继承，在修改这个类时，必须考虑到它所有的子类，并且父类修改后，所涉及到子类的功能可能会故障。
 3. 编程中在使用继承时，遵循里式替换原则。
 
-
 ### 开放封闭原则  
 
 开闭原则(Open Closed Principle)是编程中最基础、最重要的设计原则。一个程序实体，如类，模块和函数应该对扩展开放(对提供方)，对修改关闭(对使用方)。用抽象构建框架，用实现扩展细节。当程序需要变化时，尽量通过扩展程序实体的行为来实现变化，而不是通过修改已有的代码来实现变化。编程中遵循其它原则，以及使用设计模式的目的就是遵循开放封闭原则。
 
+**示例**
+
+![开闭原则示例](./asset/imgs/开闭原则1.png)
+
+```java
+/**
+ * GraphicTools
+ */
+public class GraphicTools {
+
+    public void drawShape(Shape s) {
+
+        if (s.getType() == 1) {
+            drawRetangle(s);
+        } else if (s.getType() == 2) {
+            drawCirCle(s);
+        }
+    }
+
+    public void drawRetangle(Shape s) {
+        System.out.println("绘制长方形");
+    }
+
+    public void drawCirCle(Shape s) {
+        System.out.println("绘制圆形");
+    }
+}
+
+/**
+ * Shape
+ */
+public class Shape {
+
+    protected int type;
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+}
+
+/**
+ * Retangle
+ */
+public class Retangle extends Shape {
+
+    public Retangle() {
+       this.type = 1;
+    }
+}
+
+/**
+ * Circle
+ */
+public class Circle extends Shape {
+
+    public Circle() {
+        this.type = 2;
+    }
+}
+
+/**
+ * Main
+ */
+public class Main {
+
+    public static void main(String[] args) {
+        GraphicTools graphicTools = new GraphicTools();
+        graphicTools.drawShape(new Retangle());
+        graphicTools.drawShape(new Circle());
+    }
+}
+```
+如果此时需要增加一个绘制椭圆的功能，我们需要在 GraphicTools 类中增加此方法，做一些修改，便违反了开放封闭原则，即当我们给类增加新功能的时候，尽量不修改代码，或尽可能少的修改代码。
+
+**根据开放封闭原则改进**
+
+将Shape类做成抽象类，并提供一个抽象的 draw 方法，让子类去实现即可，这样我们有新的图形种类时，只需要让新的图形类继承 Shape,并实现 draw 方法即可，使用方的代码就不需要修改了。
+
+![开闭原则改进](./asset/imgs/开闭原则2.png)
+
+```java
+/**
+ * GraphicTools
+ */
+public class GraphicTools {
+
+    public void drawShape(Shape s) {
+        s.draw();
+    }
+}
+
+/**
+ * Shape
+ */
+public abstract class Shape {
+
+    protected abstract void draw();
+}
+
+/**
+ * Retangle
+ */
+public class Retangle extends Shape {
+
+    @Override
+    protected void draw() {
+        System.out.println("绘制长方形");
+    }
+}
+
+/**
+ * Circle
+ */
+public class Circle extends Shape {
+
+    @Override
+    protected void draw() {
+        System.out.println("绘制圆形");
+    }
+}
+
+/**
+ * Main
+ */
+public class Main {
+
+    public static void main(String[] args) {
+        GraphicTools graphicTools = new GraphicTools();
+        graphicTools.drawShape(new Retangle());
+        graphicTools.drawShape(new Circle());
+    }
+}
+
+```
 
 ### 迪米特法则
 
 1. 一个对象应该对其他对象保持最少的了解。  
 2. 类与类关系越密切，耦合度越大。
 3. 迪米特法则(Demeter Principle)又叫**最少知道原则**，即一个类对自己依赖的类知道的越少越好。也就是说，对于被依赖的类不管多么复杂，都尽量将逻辑封装在类的内部。对外除了提供的 public 方法，不对外泄露任何信息。  
-4. 迪米特法则还有个更简单的定义:只与直接的朋友通信。
+4. 迪米特法则还有个更简单的定义：只与直接的朋友通信。
 5. **直接的朋友**：每个对象都会与其他对象有耦合关系，只要两个对象之间有耦合关系，我们就说这两个对象之间是朋友关系。耦合的方式很多，依赖，关联，组合，聚合等。其中，我们称出现成员变量，方法参数，方法返回值中的类为直接的朋友，而出现在局部变量中的类不是直接的朋友。也就是说，陌生的类最好不要以局部变量的形式出现在类的内部。
+
+**示例**  
+
+```java
+
+```
 
 **迪米特法则注意事项与细节**
 
@@ -387,7 +539,9 @@ public class Person {
 
 合成复用原则是指，类之间的依赖尽量使用合成/聚合的方式，而不是使用继承。
 
+**示例**
 
+![合成复用](./asset/imgs/合成复用.png)
 
 
 
