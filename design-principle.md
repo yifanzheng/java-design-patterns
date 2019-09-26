@@ -21,7 +21,7 @@
 - 降低类的复杂度，一个类只负责一项职责
 - 提高类的可读性，可维护性
 - 降低变更引起的风险
-- 通常情况下，我们应当遵守单一职责原则。只有逻辑足够简单，才可以在代码级违反单一职责原则；只有类中方法数量足够少
+- 通常情况下，我们应当遵守单一职责原则。只有逻辑足够简单，才可以在代码级违反单一职责原则；只有类中方法数量足够少，可以在方法级别保持单一职责原则。
 
 ### 接口隔离原则  
 
@@ -372,6 +372,127 @@ public class Person {
 2. 继承在给程序带来便利的同时，也带来了弊端。使用继承会给程序带来侵入性，程序的可移植性降低，增加了程序间的耦合性；如果一个类被其他类所继承，在修改这个类时，必须考虑到它所有的子类，并且父类修改后，所涉及到子类的功能可能会故障。
 3. 编程中在使用继承时，遵循里式替换原则。
 
+**示例**
+
+```java
+/**
+ * Main
+ */
+public class Main {
+
+    public static void main(String[] args) {
+        A a = new A();
+        System.out.println(a.function1(20, 9)); // 11
+
+        B b = new B();
+        System.out.println(b.function1(20, 9));// 本意是求 20 - 9，结果是 20 + 9
+        System.out.println(b.function2(20, 9)); // 20 + 9 + 9
+    }
+}
+
+/**
+ * A
+ */
+public class A {
+
+    /**
+     * 返回两数之差
+     */
+    public int function1(int a, int b) {
+        return a - b;
+    }
+}
+
+/**
+ * B 继承 A
+ */
+public class B extends A {
+
+    /**
+     * 重写了父类的方法，可能是无意识的重写
+     */
+    public int function1(int a, int b) {
+        return a + b;
+    }
+
+    public int function2(int a, int b) {
+        return this.function1(a, b) + 9;
+    }
+}
+```
+我们发现原来运行正常的相减功能发生了错误。原因就是类 B 无意中重写了父类的方法，造成原有功能出现错误。在实际编程中，我们常常会通过重写父类的方法完成新的功能，这样写起来虽然简单，但整个继承体系的复用性会比较差，特别是运行多态比较频繁的时候。
+
+**根据里氏替换原则改进**   
+
+将原来的父类和子类都继承一个更通俗的基类，原有的继承关系去掉，采用**依赖，聚合，组合**等关系代替。
+
+![里氏替换](./asset/imgs/里氏替换.png)
+
+```java
+/**
+ * Base
+ */
+public class Base {
+    /**
+     * 将基础的方法和成员写到基类中
+     */
+}
+
+/**
+ * A
+ */
+public class A extends Base {
+
+    /**
+     * 返回两数之差
+     */
+    public int function1(int a, int b) {
+        return a - b;
+    }
+}
+
+/**
+ * B
+ */
+public class B extends Base {
+
+    private A a = new A();
+
+    /**
+     * 重写了父类的方法，可能是无意识的重写
+     */
+    public int function1(int a, int b) {
+        return a + b;
+    }
+
+    public int function2(int a, int b) {
+        return this.function1(a, b) + 9;
+    }
+
+    /**
+     * 仍然使用 A 类的方法
+     */
+    public int function3(int a, int b) {
+        return this.a.function1(a, b);
+    }
+}
+
+/**
+ * Main
+ */
+public class Main {
+
+    public static void main(String[] args) {
+        A a = new A();
+        System.out.println(a.function1(20, 9)); // 11
+
+        B b = new B();
+        System.out.println(b.function3(20, 9));// 使用组合仍然可以使用到A类相关方法
+        System.out.println(b.function2(20, 9)); // 20 + 9 + 9
+    }
+}
+```
+
 ### 开放封闭原则  
 
 开闭原则(Open Closed Principle)是编程中最基础、最重要的设计原则。一个程序实体，如类，模块和函数应该对扩展开放(对提供方)，对修改关闭(对使用方)。用抽象构建框架，用实现扩展细节。当程序需要变化时，尽量通过扩展程序实体的行为来实现变化，而不是通过修改已有的代码来实现变化。编程中遵循其它原则，以及使用设计模式的目的就是遵循开放封闭原则。
@@ -522,12 +643,6 @@ public class Main {
 3. 迪米特法则(Demeter Principle)又叫**最少知道原则**，即一个类对自己依赖的类知道的越少越好。也就是说，对于被依赖的类不管多么复杂，都尽量将逻辑封装在类的内部。对外除了提供的 public 方法，不对外泄露任何信息。  
 4. 迪米特法则还有个更简单的定义：只与直接的朋友通信。
 5. **直接的朋友**：每个对象都会与其他对象有耦合关系，只要两个对象之间有耦合关系，我们就说这两个对象之间是朋友关系。耦合的方式很多，依赖，关联，组合，聚合等。其中，我们称出现成员变量，方法参数，方法返回值中的类为直接的朋友，而出现在局部变量中的类不是直接的朋友。也就是说，陌生的类最好不要以局部变量的形式出现在类的内部。
-
-**示例**  
-
-```java
-
-```
 
 **迪米特法则注意事项与细节**
 
