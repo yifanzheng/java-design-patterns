@@ -1,0 +1,150 @@
+## 工厂模式
+
+
+**示例**
+
+实现两数的加、减、乘、除运算。
+
+```java
+/**
+ * Operation 运算类
+ */
+public class Operation {
+
+    public static double getResult(double numberA, double numberB, String operate) {
+        double result = 0;
+
+        if (Objects.equals(operate, "+")) {
+            result = numberA + numberB;
+        } else if (Objects.equals(operate, "-")) {
+            result = numberA - numberB;
+        } else if (Objects.equals(operate, "*")) {
+            result = numberA * numberB;
+        } else if (Objects.equals(operate, "/")) {
+            result = numberA / numberB;
+        }
+
+        return result;
+    }
+}
+
+
+/**
+ * Main
+ */
+public class Main {
+
+    public static void main(String[] args) {
+        double numberA = 20;
+        double numberB = 15;
+        String operate = "*";
+
+        double result = Operation.getResult(numberA, numberB, operate);
+
+        System.out.println("计算结果是：" + result);
+    }
+}
+```
+上面的实现方式虽然简单且易于理解，但是当我们再增加一个新的运算（比如立方运算）时，就要对 Operation 类中的运算方法进行修改，这样可能会使得本来运行良好的功能代码发生意外的变化，导致程序发生异常。所以我们需要将代码进行改进。
+
+### 简单工厂模式
+
+简单工厂模式是属于创建型模式，是工厂模式的一种，是由一个工厂对象决定创建出哪一种产品类的实例。简单工厂模式是工厂模式家族中最简单实用的模式。  
+简单工厂模式:定义了一个创建对象的类，由这个类来封装实例化对象的行为(代码)。在软件开发中，当我们会用到大量的创建某种、某类或者某批对象时，就会
+使用到工厂模式。
+
+
+**使用简单工厂模式改进**
+
+![简单工厂](./asset/imgs/simpleFactory.png)
+
+```java
+/**
+ * Operation
+ */
+public interface Operation {
+
+    double getResult(double numberA, double numberB);
+}
+
+/**
+ * OperationAdd 加法运算
+ */
+public class OperationAdd implements Operation {
+
+    @Override
+    public double getResult(double numberA, double numberB) {
+        return numberA + numberB;
+    }
+}
+
+/**
+ * OperationSub 减法运算
+ */
+public class OperationSub implements Operation {
+
+    @Override
+    public double getResult(double numberA, double numberB) {
+        return numberA - numberB;
+    }
+}
+
+/**
+ * OperationMul 乘法运算
+ */
+public class OperationMul implements Operation {
+
+    @Override
+    public double getResult(double numberA, double numberB) {
+        return numberA * numberB;
+    }
+}
+
+/**
+ * OperationDiv 除法运算
+ */
+public class OperationDiv implements Operation {
+
+    @Override
+    public double getResult(double numberA, double numberB) {
+        if (numberB == 0) {
+            throw new ArithmeticException("除数不能为 0！");
+        }
+        return numberA / numberB;
+    }
+}
+
+/**
+ * Main
+ */
+public class Main {
+
+    public static void main(String[] args) {
+        double numberA = 20;
+        double numberB = 15;
+        String operate = "*";
+
+        Operation operation = SimpleFactory.newOperation(operate);
+        double result = operation.getResult(numberA, numberB);
+
+        System.out.println(result);
+    }
+}
+```
+如果我们需要对其中的运算进行修改，只需修改它相应的运算类即可；如果需要增加新的运算方式，只需增加相应的运算子类即可，然后在工厂类里增加一个判断分支，添加相应的实例化代码。
+
+简单工厂模式的最大优点在于工厂类中包含了必要的逻辑判断，根据客户端的选择条件动态实例化相关的类，对于客户端来说，去除了与具体产品的依赖。但是每当要增加一个新的功能时，都要到工厂类的方法里增加一个分支条件，这样就违背了开放封闭原则。
+
+
+### 工厂方法模式
+工厂方法模式,定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。
+
+
+**使用工厂方法模式改进**
+
+```java
+
+```
+
+
+### 

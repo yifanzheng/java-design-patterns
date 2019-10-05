@@ -29,7 +29,7 @@
 
 **示例**
 
-![接口隔离示例](./asset/imgs/单一职责1.png) 
+![接口隔离示例](./asset/imgs/singleResponsibility1.png) 
 
 ```java
 /**
@@ -150,7 +150,7 @@ public class B {
 
 将 IOperation 接口拆分成几个独立的接口，类 A 和类 B 分别与它们需要的接口建立依赖关系,也就是采用接口隔离原则。
 
-![接口隔离改进](./asset/imgs/单一职责2.png)
+![接口隔离改进](./asset/imgs/singleResponsibility2.png)
 
 ```java
 /**
@@ -273,7 +273,7 @@ public class B {
 **示例**
 
 Person 类发送消息的功能。
-![依赖倒置示例](./asset/imgs/依赖倒置1.png)
+![依赖倒置示例](./asset/imgs/dependencyInversion1.png)
 
 ```java
 /**
@@ -303,7 +303,7 @@ public class Email {
 
 解决思路：引入一个抽象的接口 ISend 来表示发送者，这样 Person 类与接口 ISend 发生依赖，其次 Email，WeiXin 等属于发送的范畴，它们各自实现 ISend 接口,这样就符合依赖倒转原则。
 
-![依赖倒置改进](./asset/imgs/依赖倒置2.png)
+![依赖倒置改进](./asset/imgs/dependencyInversion2.png)
 
 ```java
 /**
@@ -426,7 +426,7 @@ public class B extends A {
 
 将原来的父类和子类都继承一个更通俗的基类，原有的继承关系去掉，采用**依赖，聚合，组合**等关系代替。
 
-![里氏替换](./asset/imgs/里氏替换.png)
+![里氏替换](./asset/imgs/liskovSubstitution.png)
 
 ```java
 /**
@@ -499,7 +499,7 @@ public class Main {
 
 **示例**
 
-![开闭原则示例](./asset/imgs/开闭原则1.png)
+![开闭原则示例](./asset/imgs/openAndClosed1.png)
 
 ```java
 /**
@@ -579,7 +579,7 @@ public class Main {
 
 将Shape类做成抽象类，并提供一个抽象的 draw 方法，让子类去实现即可，这样我们有新的图形种类时，只需要让新的图形类继承 Shape,并实现 draw 方法即可，使用方的代码就不需要修改了。
 
-![开闭原则改进](./asset/imgs/开闭原则2.png)
+![开闭原则改进](./asset/imgs/openAndClosed2.png)
 
 ```java
 /**
@@ -656,7 +656,7 @@ public class Main {
 
 **示例**
 
-![合成复用](./asset/imgs/合成复用.png)
+![合成复用](./asset/imgs/compositeReuse.png)
 
 
 
