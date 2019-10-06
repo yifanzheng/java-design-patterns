@@ -115,6 +115,28 @@ public class OperationDiv implements Operation {
 }
 
 /**
+ * SimpleFactory
+ */
+public class SimpleFactory {
+
+    public static Operation newOperation(String operate) {
+
+        Operation operation = null;
+        if (Objects.equals(operate, "+")) {
+            operation = new OperationAdd();
+        } else if (Objects.equals(operate, "-")) {
+            operation = new OperationSub();
+        } else if (Objects.equals(operate, "*")) {
+            operation = new OperationMul();
+        } else if (Objects.equals(operate, "/")) {
+            operation = new OperationDiv();
+        }
+
+        return operation;
+    }
+}
+
+/**
  * Main
  */
 public class Main {
@@ -271,4 +293,92 @@ public class Main {
 
 工厂方法模式克服了简单工厂模式违背开放封闭原则的缺点，又保持了封装对象创建过程的优点。它们都是集中封装了对象的创建，使得要更换对象时，不需要做大的改动就可实现，降低了客户程序与产品对象的耦合。工厂方法模式是简单工厂模式的进一步 抽象和推广。由于使用了多态性，工厂方法模式保持了简单工厂模式的优点，而且克服了它的缺点。但缺点是由于每加一个产品，就需要加一个产品工厂的类，增加了额外的开发量。
 
-### 抽象工厂模式
+### 抽象工厂模式  
+
+抽象工厂模式定义了一个接口用于创建相关或有依赖关系的对象簇，而无需指明且体的类。抽象工厂模式是**将简单工厂模式和工厂方法模式进行整合**。从设计层面看，抽象工厂模式就是对简单工厂模式的改进(或者称为进一步的抽象)。将工厂抽象成两层，抽象工厂和具体实现的工厂子类。程序员可以根据创建对象类型使用对应的工厂子类。这样将单个的简单工厂类变成了工厂簇更利于代码的维护和扩展。
+
+**使用抽象工厂模式改进** 
+
+```java
+/**
+ * Operation
+ */
+public interface Operation {
+
+    double getResult(double numberA, double numberB);
+}
+
+/**
+ * OperationAdd 加法运算
+ */
+public class OperationAdd implements Operation {
+
+    @Override
+    public double getResult(double numberA, double numberB) {
+        return numberA + numberB;
+    }
+}
+
+/**
+ * OperationSub 减法运算
+ */
+public class OperationSub implements Operation {
+
+    @Override
+    public double getResult(double numberA, double numberB) {
+        return numberA - numberB;
+    }
+}
+
+/**
+ * OperationMul 乘法运算
+ */
+public class OperationMul implements Operation {
+
+    @Override
+    public double getResult(double numberA, double numberB) {
+        return numberA * numberB;
+    }
+}
+
+/**
+ * OperationDiv 除法运算
+ */
+public class OperationDiv implements Operation {
+
+    @Override
+    public double getResult(double numberA, double numberB) {
+        if (numberB == 0) {
+            throw new ArithmeticException("除数不能为 0！");
+        }
+        return numberA / numberB;
+    }
+}
+
+/**
+ * OperationAccess 利用反射技术实例化对象
+ */
+public class OperationAccess {
+
+    public static Operation createOperation(Class<? extends Operation> clazz) {
+        Operation operation = null;
+        try {
+            operation = clazz.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return operation;
+    }
+}
+```
+一般来说，所有在用简单工厂的地方，都可以考虑用反射技术来去除 switch 或 if，解除分支判断带来的耦合。
+
+### 小结
+
+工厂模式是将实例化对象的代码提取出来，放到一个类中统一管理和维护，达到与主项目的
+依赖关系的解耦目的，从而提高项目的扩展和维护性。创建对象实例时，不要直接 new 类，而是把这个 new 类的动作放在一个工厂的方法中并返回。
+
+
+
