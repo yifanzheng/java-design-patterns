@@ -157,10 +157,209 @@ public class Main {
 
 > 浅克隆是指，被复制对象的所有变量都含有与原来的对象相同的值，而所有的对其他对象的引用都仍然指向原来的对象。——《大话设计模式》
 
-对于数据类型是基本数据类型的成员变量，浅克隆会直接进行值传递，也就是将该属性值复制一份给新的对象。
-对于数据类型是引用数据类型的成员变量，比如说成员变量是某个数组、某个类的对象等，那么浅克隆会进行引用传递，也就是只是将该成员变量的引用值(内存地址)复制一份给新的对象。因为实际上两个对象的该成员变量都指向同一个实例。在这种情况下，在一个对象中修改该成员变量会影响到另一个对象的该成员变量值。
+对于数据类型是基本数据类型的成员变量，浅克隆会直接进行值传递，也就是将该属性值复制一份给新的对象。  
+对于数据类型是引用数据类型的成员变量，比如说成员变量是某个数组、某个类的对象等，那么浅克隆会进行引用传递，也就是只是将该成员变量的引用值(内存地址)复制一份给新的对象；因此原始对象及其复本引用同一对象。在这种情况下，在一个对象中修改该成员变量的值会影响到另一个对象的该成员变量的值。
 
-**深克隆**  
+**深克隆**   
+
+深克隆，顾名思义，除了复制对象的所有基本数据类型的成员变量值，还为所有引用数据类型的成员变量申请存储空间，并复制每个引用数据类型成员变量所引用的对象，直到该对象可达的所有对象。也就是说，对象进行深克隆要对整个对象(包括对象的引用类型)进行复制。这样就不会出现一个对象的成员变量的值被修改会影响另一个对象的成员变量的值。
+
+**浅克隆&深克隆示例对比**  
+
+示例：复制下面的简历类。
+
+```java
+public class Resume {
+
+    private String name;
+
+    private String sex;
+
+    private String age;
+
+    private WorkExperience workExperience;
+
+    public Resume(String name) {
+        this.name = name;
+        this.workExperience = new WorkExperience();
+    }
+
+    public void setPersonInfo(String sex, String age) {
+        this.sex = sex;
+        this.age = age;
+    }
+
+    public void setWorkExperience(String workDate, String company) {
+       this.workExperience.setWorkDate(workDate);
+       this.workExperience.setCompany(company);
+    }
+
+    @Override
+    public String toString() {
+        return "Resume{" +
+                "name='" + name + '\'' +
+                ", sex='" + sex + '\'' +
+                ", age='" + age + '\'' +
+                ", workExperience=" + workExperience +
+                '}';
+    }
+}
+
+/**
+ * WorkExperience
+ */
+public class WorkExperience {
+
+    private String workDate;
+
+    private String company;
+
+    public String getWorkDate() {
+        return workDate;
+    }
+
+    public void setWorkDate(String workDate) {
+        this.workDate = workDate;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    @Override
+    public String toString() {
+        return "WorkExperience{" +
+                "workDate='" + workDate + '\'' +
+                ", company='" + company + '\'' +
+                '}';
+    }
+}
+```
+- 使用浅克隆复制
+
+```java
+/**
+ * Resume
+ */
+public class Resume implements Cloneable {
+
+    private String name;
+
+    private String sex;
+
+    private String age;
+
+    private WorkExperience workExperience;
+
+    public Resume(String name) {
+        this.name = name;
+        this.workExperience = new WorkExperience();
+    }
+
+    public void setPersonInfo(String sex, String age) {
+        this.sex = sex;
+        this.age = age;
+    }
+
+    public void setWorkExperience(String workDate, String company) {
+       this.workExperience.setWorkDate(workDate);
+       this.workExperience.setCompany(company);
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    @Override
+    public String toString() {
+        return "Resume{" +
+                "name='" + name + '\'' +
+                ", sex='" + sex + '\'' +
+                ", age='" + age + '\'' +
+                ", workExperience=" + workExperience +
+                '}';
+    }
+}
+
+/**
+ * WorkExperience
+ */
+public class WorkExperience implements Cloneable {
+
+    private String workDate;
+
+    private String company;
+
+    public String getWorkDate() {
+        return workDate;
+    }
+
+    public void setWorkDate(String workDate) {
+        this.workDate = workDate;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    @Override
+    public String toString() {
+        return "WorkExperience{" +
+                "workDate='" + workDate + '\'' +
+                ", company='" + company + '\'' +
+                '}';
+    }
+}
+
+/**
+ * Main
+ */
+public class Main {
+
+    public static void main(String[] args) throws CloneNotSupportedException {
+        Resume a = new Resume("God.Gao");
+        a.setPersonInfo("woman", "20");
+        a.setWorkExperience("2014-2018", "XXXCompany");
+
+        Resume b = (Resume) a.clone();
+        b.setWorkExperience("2015-2019", "xiaokejiCompany");
+
+        Resume c = (Resume) a.clone();
+        c.setWorkExperience("2014-2017", "yunCompany");
+
+        System.out.println(a.toString());
+        System.out.println(b.toString());
+        System.out.println(c.toString());
+    }
+}
+```
+
+结果：
+
+```java
+Resume{name='God.Gao', sex='woman', age='20', workExperience=WorkExperience{workDate='2014-2017', company='yunCompany'}}
+Resume{name='God.Gao', sex='woman', age='20', workExperience=WorkExperience{workDate='2014-2017', company='yunCompany'}}
+Resume{name='God.Gao', sex='woman', age='20', workExperience=WorkExperience{workDate='2014-2017', company='yunCompany'}}
+```
+从结果可以看出，使用浅克隆复制对象，当对象中存在引用类型的成员变量时，只是复制了该成员变量的引用地址，并没有让该成员变量指向复制过的新对象。因此造成了一个对象修改该成员变量的值影响到了其他对象的该成员变量的值。
+
+- 使用深克隆复制
+
+
 
 
 
