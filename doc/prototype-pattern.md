@@ -166,7 +166,7 @@ public class Main {
 
 **浅克隆&深克隆示例对比**  
 
-示例：复制下面的简历类。
+示例：复制下面的简历（Resume）类。
 
 ```java
 public class Resume {
@@ -358,6 +358,285 @@ Resume{name='God.Gao', sex='woman', age='20', workExperience=WorkExperience{work
 从结果可以看出，使用浅克隆复制对象，当对象中存在引用类型的成员变量时，只是复制了该成员变量的引用地址，并没有让该成员变量指向复制过的新对象。因此造成了一个对象修改该成员变量的值影响到了其他对象的该成员变量的值。
 
 - 使用深克隆复制
+
+深克隆有两种实现方式：1. 重写 clone() 方法，2. 使用序列化的方式。  
+
+1. 重写 clone() 方法
+
+```java
+/**
+ * Resume
+ */
+public class Resume implements Cloneable {
+
+    private String name;
+
+    private String sex;
+
+    private String age;
+
+    private WorkExperience workExperience;
+
+    public Resume(String name) {
+        this.name = name;
+        this.workExperience = new WorkExperience();
+    }
+
+    public void setPersonInfo(String sex, String age) {
+        this.sex = sex;
+        this.age = age;
+    }
+
+    public void setWorkExperience(String workDate, String company) {
+       this.workExperience.setWorkDate(workDate);
+       this.workExperience.setCompany(company);
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        Resume resume = (Resume) super.clone();
+        // 对引用类型的属性进行克隆
+        resume.workExperience = (WorkExperience) this.workExperience.clone();
+        return resume;
+    }
+
+    @Override
+    public String toString() {
+        return "Resume{" +
+                "name='" + name + '\'' +
+                ", sex='" + sex + '\'' +
+                ", age='" + age + '\'' +
+                ", workExperience=" + workExperience +
+                '}';
+    }
+}
+
+
+/**
+ * WorkExperience
+ */
+public class WorkExperience implements Cloneable {
+
+    private String workDate;
+
+    private String company;
+
+    public String getWorkDate() {
+        return workDate;
+    }
+
+    public void setWorkDate(String workDate) {
+        this.workDate = workDate;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    @Override
+    public String toString() {
+        return "WorkExperience{" +
+                "workDate='" + workDate + '\'' +
+                ", company='" + company + '\'' +
+                '}';
+    }
+}
+
+/**
+ * Main
+ */
+public class Main {
+
+    public static void main(String[] args) throws CloneNotSupportedException {
+        Resume a = new Resume("God.Gao");
+        a.setPersonInfo("woman", "20");
+        a.setWorkExperience("2014-2018", "XXXCompany");
+
+        Resume b = (Resume) a.clone();
+        b.setWorkExperience("2015-2019", "xiaokejiCompany");
+
+        Resume c = (Resume) a.clone();
+        c.setWorkExperience("2014-2017", "yunCompany");
+
+        System.out.println(a.toString());
+        System.out.println(b.toString());
+        System.out.println(c.toString());
+    }
+}
+```
+
+2. 使用序列化的方式
+
+**注意**：使用序列化方式实现深克隆时，所涉及的类必须实现 Serializable 接口。
+
+```java
+/**
+ * Resume
+ */
+public class Resume implements Serializable {
+
+    private static final long serialVersionUID = 6395782880219068537L;
+
+    private String name;
+
+    private String sex;
+
+    private String age;
+
+    private WorkExperience workExperience;
+
+    public Resume(String name) {
+        this.name = name;
+        this.workExperience = new WorkExperience();
+    }
+
+    public void setPersonInfo(String sex, String age) {
+        this.sex = sex;
+        this.age = age;
+    }
+
+    public void setWorkExperience(String workDate, String company) {
+        this.workExperience.setWorkDate(workDate);
+        this.workExperience.setCompany(company);
+    }
+
+    public Object deepClone() {
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        ObjectOutputStream objectOutputStream = null;
+        ByteArrayInputStream byteArrayInputStream = null;
+        ObjectInputStream objectInputStream = null;
+
+        try {
+            // 创建对象输出流
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            // 将对象以对象流的方式输出
+            objectOutputStream.writeObject(this);
+
+            // 创建对象输入流
+            byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+            objectInputStream = new ObjectInputStream(byteArrayInputStream);
+            // 读取对象流
+            return objectInputStream.readObject();
+        } catch (IOException | SecurityException | ClassNotFoundException e) {
+            return null;
+        } finally {
+            try {
+                if (objectInputStream != null) {
+                    objectInputStream.close();
+                }
+                if (byteArrayInputStream != null) {
+                    byteArrayInputStream.close();
+                }
+                if (objectOutputStream != null) {
+                    objectOutputStream.close();
+                }
+                if (byteArrayOutputStream != null) {
+                    byteArrayOutputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Resume{" +
+                "name='" + name + '\'' +
+                ", sex='" + sex + '\'' +
+                ", age='" + age + '\'' +
+                ", workExperience=" + workExperience +
+                '}';
+    }
+}
+
+/**
+ * WorkExperience
+ */
+public class WorkExperience implements Serializable {
+
+    private static final long serialVersionUID = -939371138425810409L;
+
+    private String workDate;
+
+    private String company;
+
+    public String getWorkDate() {
+        return workDate;
+    }
+
+    public void setWorkDate(String workDate) {
+        this.workDate = workDate;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    @Override
+    public String toString() {
+        return "WorkExperience{" +
+                "workDate='" + workDate + '\'' +
+                ", company='" + company + '\'' +
+                '}';
+    }
+}
+
+
+/**
+ * Main
+ */
+public class Main {
+
+    public static void main(String[] args) {
+        Resume a = new Resume("God.Gao");
+        a.setPersonInfo("woman", "20");
+        a.setWorkExperience("2014-2018", "XXXCompany");
+
+        Resume b = (Resume) a.deepClone();
+        b.setWorkExperience("2015-2019", "xiaokejiCompany");
+
+        Resume c = (Resume) a.deepClone();
+        c.setWorkExperience("2014-2017", "yunCompany");
+
+        System.out.println(a.toString());
+        System.out.println(b.toString());
+        System.out.println(c.toString());
+    }
+}
+```
+
+结果：  
+
+```java
+Resume{name='God.Gao', sex='woman', age='20', workExperience=WorkExperience{workDate='2014-2018', company='XXXCompany'}}
+Resume{name='God.Gao', sex='woman', age='20', workExperience=WorkExperience{workDate='2015-2019', company='xiaokejiCompany'}}
+Resume{name='God.Gao', sex='woman', age='20', workExperience=WorkExperience{workDate='2014-2017', company='yunCompany'}}
+```
+
+### 小结
+
+在创建新的对象比较复杂时，可以利用原型模式简化对象的创建过程，同时也能够提高效率，不用重新初始化对象，而是动态地获得对象运行时的状态。如果原始对象发生变化(增加或者减少属性)，其它克隆对象的也会发生相应的变化，无需修改代码。  
+在实现深克隆的时候可能需要比较复杂的代码，需要为每一个类实现一个克隆方法，这对全新的类来说不是很难，但对已有的类进行改造时，需要修改其源代码，违背了开放封闭原则。
+
+
+
+
+
 
 
 
