@@ -29,7 +29,7 @@
 
 **示例**
 
-![接口隔离示例](./asset/imgs/singleResponsibility1.png) 
+![接口隔离示例](./asset/imgs/interfaceIsolation1.png) 
 
 ```java
 /**
@@ -150,7 +150,7 @@ public class B {
 
 将 IOperation 接口拆分成几个独立的接口，类 A 和类 B 分别与它们需要的接口建立依赖关系,也就是采用接口隔离原则。
 
-![接口隔离改进](./asset/imgs/singleResponsibility2.png)
+![接口隔离改进](./asset/imgs/interfaceIsolation2.png)
 
 ```java
 /**
