@@ -4,7 +4,7 @@
 
 - [七大设计原则](doc/design-principle.md)
 - [单例模式](doc/singleton-pattern.md)
-- [工厂模式](doc/factoru-pattern.md)
+- [工厂模式](doc/factory-pattern.md)
 - [原型模式](doc/prototype-pattern.md)
 
 ### 后记
