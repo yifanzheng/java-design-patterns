@@ -5,7 +5,7 @@
 
 ### 建造者模式解析
 
-![建造者模式结构图](./asset/imgs/builderStruct.png)
+![建造者模式结构图](./asset/imgs/builder-struct.png)
 
 **角色介绍**
 

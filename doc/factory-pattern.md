@@ -54,7 +54,7 @@ public class Main {
 
 **使用简单工厂模式改进**
 
-![简单工厂](./asset/imgs/simpleFactory.png)
+![简单工厂](./asset/imgs/simple-factory.png)
 
 ```java
 /**
@@ -162,7 +162,7 @@ public class Main {
 
 **使用工厂方法模式改进**
 
-![工厂方法](./asset/imgs/factoryMethod.png)
+![工厂方法](./asset/imgs/factory-method.png)
 
 ```java
 /**
@@ -297,7 +297,7 @@ public class Main {
 
 **使用抽象工厂模式改进** 
 
-![抽象工厂](./asset/imgs/abstractFactory.png)
+![抽象工厂](./asset/imgs/abstract-factory.png)
 
 ```java
 /**
