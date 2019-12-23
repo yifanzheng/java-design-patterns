@@ -168,7 +168,7 @@ public class Main {
         System.out.println(voltage5V.output5V());
     }
 }
-````
+```
 由于 Java 是单继承机制，所以类适配器需要继承被适配类，有一定局限性；被适配类的方法在 Adapter 中都会暴露出来，也增加了使用的成本。但是其继承了被适配类，所以它可以根据需求重写被适配类中的方法，使得Adapter 的灵活性增强了。
 
 

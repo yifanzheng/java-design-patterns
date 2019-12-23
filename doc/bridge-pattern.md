@@ -8,7 +8,7 @@
 
 ### 桥接模式解析
 
-![桥接模式结构图](./asset/imgs/bridgeStruct.png)
+![桥接模式结构图](./asset/imgs/bridge-struct.png)
 
 **角色介绍**
 
