@@ -8,7 +8,7 @@
 
 这里主要以对象适配器为例。
 
-![适配器结构图](./asset/imgs/adapter_struct.png)
+![适配器结构图](./asset/imgs/adapter-struct.png)
 
 **角色介绍**
 
