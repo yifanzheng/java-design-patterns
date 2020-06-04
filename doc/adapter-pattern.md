@@ -12,6 +12,7 @@
 
 **角色介绍**
 
+- Client：客户端。
 - Target：客户所期待的接口，可以是具体的或抽象的类，也可以是接口。
 - Adaptee：需要适配的类。
 - Adapter：通过在内部包装一个 Adaptee 对象，把源接口转换成目标接口。
@@ -21,11 +22,8 @@
 - Target 类：目标类。
 
 ```java
-public class Target {
-
-    public void request() {
-        System.out.println("普通请求！");
-    }
+public interface Target {
+    void request();
 }
 ```
 - Adaptee 类：需要适配的类。
@@ -42,13 +40,34 @@ public class Adaptee {
 - Adapter 类：适配器类。
 
 ```java
-public class Adapter extends Target {
+public class Adapter implements Target {
 
-    private Adaptee adaptee = new Adaptee();
+    private Adaptee adaptee;
+
+    public Adapter() {
+        this.adaptee = new Adaptee();
+    }
 
     @Override
     public void request() {
-        adaptee.specificRequest();
+       this.adaptee.specificRequest();
+    }
+}
+```
+
+- Client 类
+
+```java
+public class Client {
+
+    private Target target;
+
+    public Client(Target target) {
+      this.target = target;
+    }
+
+    public void request() {
+        this.target.request();
     }
 }
 ```
@@ -59,17 +78,16 @@ public class Adapter extends Target {
 public class Main {
 
     public static void main(String[] args) {
-
-        Target target = new Adapter();
-
-        target.request();
+        // 客户端调用请求
+        Client client = new Client(new Adapter());
+        client.request();
     }
 }
 ```
 
 ### 示例
 
-以充电器为例，充电器本身相当于 Adapter, 220V 交流电相当于被适配者 Adaptee，转换为 5V 直流电相当于目标者。
+以充电器为例，充电器本身相当于适配器 (Adapter), 220V 交流电相当于被适配者 (Adaptee)，转换为 5V 直流电相当于目标者， 手机充电相当于客户端使用者。
 
 **对象适配器**
 
@@ -97,7 +115,11 @@ public interface Voltage5V {
  */
 public class VoltageAdapter implements Voltage5V {
 
-    private Voltage220V voltage220V = new Voltage220V();
+    private Voltage220V voltage220V;
+    
+    public VoltageAdapter() {
+       this.voltage220V = new Voltage220V()
+    }
 
     @Override
     public int output5V() {
@@ -108,15 +130,30 @@ public class VoltageAdapter implements Voltage5V {
 }
 
 /**
+ * Phone
+ */
+public class Phone {
+
+    private Voltage5V voltage5V;
+    
+    public Phone(Voltage5V voltage5V) {
+       this.voltage5V = voltage5V;
+    }
+    
+    public void charge() {
+       this.voltage5V.output5V();
+    }
+}
+
+/**
  * Main
  */
 public class Main {
 
     public static void main(String[] args) {
-
-        Voltage5V voltage5V = new VoltageAdapter();
-
-        System.out.println(voltage5V.output5V());
+       // 手机充电
+       Phone phone = new Phone(new VoltageAdapter());
+       phone.charge();
     }
 }
 ```
@@ -157,19 +194,34 @@ public class VoltageAdapter extends Voltage220V implements Voltage5V {
 }
 
 /**
+ * Phone
+ */
+public class Phone {
+
+    private Voltage5V voltage5V;
+    
+    public Phone(Voltage5V voltage5V) {
+       this.voltage5V = voltage5V;
+    }
+    
+    public void charge() {
+       this.voltage5V.output5V();
+    }
+}
+
+/**
  * Main
  */
 public class Main {
 
     public static void main(String[] args) {
-
-        Voltage5V voltage5V = new VoltageAdapter();
-
-        System.out.println(voltage5V.output5V());
+       // 手机充电
+       Phone phone = new Phone(new VoltageAdapter());
+       phone.charge();
     }
 }
 ```
-由于 Java 是单继承机制，所以类适配器需要继承被适配类，有一定局限性；被适配类的方法在 Adapter 中都会暴露出来，也增加了使用的成本。但是其继承了被适配类，所以它可以根据需求重写被适配类中的方法，使得Adapter 的灵活性增强了。
+由于 Java 是单继承机制，所以类适配器需要继承被适配类，有一定局限性；被适配类的方法在 Adapter 中都会暴露出来，也增加了使用的成本。但是其继承了被适配类，所以它可以根据需求重写被适配类中的方法，使得 Adapter 的灵活性增强了。
 
 
 **接口适配器**
@@ -235,15 +287,30 @@ public class Voltage5V extends AbstractVoltage {
 }
 
 /**
+ * Phone
+ */
+public class Phone {
+
+    private Voltage5V voltage5V;
+    
+    public Phone(Voltage5V voltage5V) {
+       this.voltage5V = voltage5V;
+    }
+    
+    public void charge() {
+       this.voltage5V.output5V();
+    }
+}
+
+/**
  * Main
  */
 public class Main {
 
     public static void main(String[] args) {
-
-        Voltage5V voltage5V = new Voltage5V();
-
-        System.out.println(voltage5V.output5V());
+       // 手机充电
+       Phone phone = new Phone(new Voltage5V());
+       phone.charge();
     }
 }
 ```
