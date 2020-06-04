@@ -273,6 +273,34 @@ public class DivFactory implements IFactory {
 }
 
 /**
+ * OperateType
+ */
+public enum OperateType {
+
+    ADD, MUL, DIV, SUB
+}
+
+/**
+ * OperateFactoryMaker
+ */
+public class OperateFactoryMaker {
+
+    public static IFactory makeFactory(OperateType type) {
+
+        if (Objects.equals(OperateType.ADD, type)) {
+            return new AddFactory();
+        } else if (Objects.equals(OperateType.SUB, type)) {
+            return new SubFactory();
+        } else if (Objects.equals(OperateType.MUL, type)) {
+            return new MulFactory();
+        } else if (Objects.equals(OperateType.DIV, type)) {
+            return new DivFactory();
+        }
+
+        throw new IllegalArgumentException("OperateType not supported.");
+    }
+
+/**
  * Main
  */
 public class Main {
@@ -280,8 +308,7 @@ public class Main {
     public static void main(String[] args) {
         double numberA = 20;
         double numberB = 15;
-        MulFactory mulFactory = new MulFactory();
-        Operation operation = mulFactory.newOperation();
+        Operation operation = OperateFactoryMaker.makeFactory(OperateType.MUL).newOperation();
         double result = operation.getResult(numberA, numberB);
 
         System.out.println(result);
