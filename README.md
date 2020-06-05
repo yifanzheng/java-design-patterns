@@ -7,7 +7,7 @@
 ### 创建型模式
 
 - [单例模式](doc/singleton-pattern.md)
-- [（抽象）工厂模式](doc/factory-pattern.md)
+- [工厂模式 & 抽象工厂模式](doc/factory-pattern.md)
 - [原型模式](doc/prototype-pattern.md)
 - [建造者模式](doc/builder-pattern.md)
 
