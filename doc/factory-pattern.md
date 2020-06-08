@@ -1,4 +1,6 @@
-## 工厂模式
+## 工厂模式 & 抽象工厂模式
+
+当我们有一个具有多个子类的超类并且基于不同的输入，需要返回一个子类时，将使用工厂设计模式。这种模式消除了从客户端程序到工厂类的实例化的责任。注意，此模式也称为“工厂方法模式”。
 
 **示例**
 
@@ -156,11 +158,11 @@ public class Main {
 
 简单工厂模式的最大优点在于工厂类中包含了必要的逻辑判断，根据客户端的选择条件动态实例化相关的类，对于客户端来说，去除了与具体产品的依赖。但是每当要增加一个新的功能时，都要到工厂类的方法里增加一个分支条件，这样就违背了开放封闭原则。
 
-### 工厂方法模式  
+### 工厂模式  
 
-工厂方法模式（Factory Method），定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。
+工厂模式（Factory Method），定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂模式使一个类的实例化延迟到其子类。
 
-**使用工厂方法模式改进**
+**使用工厂模式改进**
 
 ![工厂方法](./asset/imgs/factory-method.png)
 
@@ -273,6 +275,34 @@ public class DivFactory implements IFactory {
 }
 
 /**
+ * OperateType
+ */
+public enum OperateType {
+
+    ADD, MUL, DIV, SUB
+}
+
+/**
+ * OperateFactoryMaker
+ */
+public class OperateFactoryMaker {
+
+    public static IFactory makeFactory(OperateType type) {
+
+        if (Objects.equals(OperateType.ADD, type)) {
+            return new AddFactory();
+        } else if (Objects.equals(OperateType.SUB, type)) {
+            return new SubFactory();
+        } else if (Objects.equals(OperateType.MUL, type)) {
+            return new MulFactory();
+        } else if (Objects.equals(OperateType.DIV, type)) {
+            return new DivFactory();
+        }
+
+        throw new IllegalArgumentException("OperateType not supported.");
+    }
+
+/**
  * Main
  */
 public class Main {
@@ -280,8 +310,7 @@ public class Main {
     public static void main(String[] args) {
         double numberA = 20;
         double numberB = 15;
-        MulFactory mulFactory = new MulFactory();
-        Operation operation = mulFactory.newOperation();
+        Operation operation = OperateFactoryMaker.makeFactory(OperateType.MUL).newOperation();
         double result = operation.getResult(numberA, numberB);
 
         System.out.println(result);
@@ -289,11 +318,11 @@ public class Main {
 }
 ```
 
-工厂方法模式克服了简单工厂模式违背开放封闭原则的缺点，又保持了封装对象创建过程的优点。它们都是集中封装了对象的创建，使得要更换对象时，不需要做大的改动就可实现，降低了客户程序与产品对象的耦合。工厂方法模式是简单工厂模式的进一步抽象和推广。由于使用了多态性，工厂方法模式保持了简单工厂模式的优点，而且克服了它的缺点。但缺点是由于每加一个产品，就需要加一个产品工厂的类，增加了额外的开发量。
+工厂模式克服了简单工厂模式违背开放封闭原则的缺点，又保持了封装对象创建过程的优点。它们都是集中封装了对象的创建，使得要更换对象时，不需要做大的改动就可实现，降低了客户程序与产品对象的耦合。工厂模式是简单工厂模式的进一步抽象和推广。由于使用了多态性，工厂方法模式保持了简单工厂模式的优点，而且克服了它的缺点。但缺点是由于每加一个产品，就需要加一个产品工厂的类，增加了额外的开发量。
 
 ### 抽象工厂模式  
 
-抽象工厂模式定义了一个接口用于创建相关或有依赖关系的对象簇，而无需指明且体的类。抽象工厂模式是**将简单工厂模式和工厂方法模式进行整合**。从设计层面看，抽象工厂模式就是对简单工厂模式的改进(或者称为进一步的抽象)。将工厂抽象成两层，抽象工厂和具体实现的工厂子类。程序员可以根据创建对象类型使用对应的工厂子类。这样将单个的简单工厂类变成了工厂簇更利于代码的维护和扩展。
+抽象工厂模式定义了一个接口用于创建相关或有依赖关系的对象簇，而无需指明且体的类。抽象工厂模式是**将简单工厂模式和工厂模式进行整合**。从设计层面看，抽象工厂模式就是对简单工厂模式的改进(或者称为进一步的抽象)。将工厂抽象成两层，抽象工厂和具体实现的工厂子类。程序员可以根据创建对象类型使用对应的工厂子类。这样将单个的简单工厂类变成了工厂簇更利于代码的维护和扩展。
 
 **使用抽象工厂模式改进** 
 
@@ -377,7 +406,7 @@ public class OperationAccess {
 
 ### 小结
 
-工厂模式是将实例化对象的代码提取出来，放到一个类中统一管理和维护，达到与主项目的依赖关系的解耦目的，从而提高项目的扩展和维护性。创建对象实例时，不要直接 new 类，而是把这个 new 类的动作放在一个工厂的方法中并返回。
+工厂模式是将实例化对象的代码提取出来，放到一个类中统一管理和维护，达到与主项目的依赖关系的解耦目的，从而提高项目的扩展和维护性，例如，我们可以很容易地更改 Operation 类的实现，而客户端程序并不会意识到这一点。在创建对象实例时，不要直接 new 类，而是把这个 new 类的动作放在一个工厂的方法中并返回。
 
 
 
