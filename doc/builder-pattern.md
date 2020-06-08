@@ -222,13 +222,11 @@ public class Main {
 
     public static void main(String[] args) {
         // 普通房子
-        CommonHouseBuilder commonHouseBuilder = new CommonHouseBuilder();
-        House commonHouse = commonHouseBuilder.build();
+        House commonHouse = new CommonHouseBuilder().build();
         System.out.println(commonHouse.toString());
 
         // 高房子
-        HighHouseBuilder highHouseBuilder = new HighHouseBuilder();
-        House highHouse = highHouseBuilder.build();
+        House highHouse = new HighHouseBuilder().build();
         System.out.println(highHouse.toString());
 
     }
@@ -387,6 +385,103 @@ public class Main {
     }
 }
 ```
+
+**建造者模式新写法**
+
+将生成器定义成对象的内部类，通过传入不同的参数值生成不同类型的产品对象。
+
+```java
+/**
+ * House
+ */
+public final class House {
+
+    private final HouseType type;
+
+    private final Integer length;
+
+    private final Integer width;
+
+    private final Integer high;
+
+    private House(Builder builder) {
+        this.type = builder.type;
+        this.length = builder.length;
+        this.width = builder.width;
+        this.high = builder.high;
+    }
+
+    public Integer getLength() {
+        return length;
+    }
+
+    public Integer getWidth() {
+        return width;
+    }
+
+    public Integer getHigh() {
+        return high;
+    }
+
+    public static class Builder {
+
+        private final HouseType type;
+
+        private Integer length;
+
+        private Integer width;
+
+        private Integer high;
+
+        public Builder(HouseType type) {
+            if (type == null) {
+                throw new IllegalArgumentException("type can not be null");
+            }
+            this.type = type;
+        }
+
+        public Builder setLength(Integer length) {
+            this.length = length;
+            return this;
+        }
+
+        public Builder setWidth(Integer width) {
+            this.width = width;
+            return this;
+        }
+
+        public Builder setHigh(Integer high) {
+            this.high = high;
+            return this;
+        }
+
+        public House build() {
+            return new House(this);
+        }
+    }
+}
+
+/**
+ * HouseType
+ */
+public enum HouseType {
+
+    DEFAULT, HIGH
+}
+
+/**
+ * Main
+ */
+public class Main {
+
+    public static void main(String[] args) {
+        House house = new House.Builder(HouseType.DEFAULT)
+                .setHigh(5).setWidth(20).setLength(50).build();
+    }
+}
+```
+
+此写法相对于上面的来说，可以避免类爆炸情况，当需要不同类型的产品对象时，只需传入不同的参数就可以了，不用再单独去创建新的 Builder 类。
 
 ### 小结
 
