@@ -53,9 +53,9 @@ public class ConcreteComponent implements Component {
  */
 public abstract class Decorator implements Component {
 
-    private Component component;
+    protected Component component;
 
-    protected void decorate(Component component) {
+    public Decorator(Component component) {
         this.component = component;
     }
 
@@ -78,6 +78,10 @@ public abstract class Decorator implements Component {
  */
 public class ConcreteDecoratorA extends Decorator {
 
+    public ConcreteDecoratorA(Component component) {
+        super(component);
+    }
+
     @Override
     public void operation() {
         // 执行原 Component 对象的功能
@@ -95,6 +99,10 @@ public class ConcreteDecoratorA extends Decorator {
  * ConcreteDecoratorB
  */
 public class ConcreteDecoratorB extends Decorator {
+
+    public ConcreteDecoratorB(Component component) {
+        super(component);
+    }
 
     @Override
     public void operation() {
@@ -115,16 +123,9 @@ public class ConcreteDecoratorB extends Decorator {
 public class Main {
 
     public static void main(String[] args) {
-        // 具体被装饰的组件
-        ConcreteComponent component = new ConcreteComponent();
-        // 装饰者 A
-        ConcreteDecoratorA decoratorA = new ConcreteDecoratorA();
-        // 装饰者 B
-        ConcreteDecoratorB decoratorB = new ConcreteDecoratorB();
+        // 装饰组件
+        ConcreteDecoratorB decoratorB = new ConcreteDecoratorB(new ConcreteDecoratorA(new ConcreteComponent()));
 
-        // 装饰组件 component
-        decoratorA.decorate(component);
-        decoratorB.decorate(decoratorA);
         decoratorB.operation();
     }
 }
@@ -292,12 +293,8 @@ public class Chocolate extends AbstractIngredients {
 public class Main {
 
     public static void main(String[] args) {
-        // 美式咖啡
-        Drink drink = new AmericanCafe();
-        // 加牛奶
-        drink = new Milk(drink);
-        // 加巧克力
-        drink = new Chocolate(drink);
+        // 牛奶巧克力美式咖啡
+        Drink drink = new Chocolate(new Milk(new AmericanCafe()));
 
         System.out.println(drink.getDescription());
         System.out.println(drink.getCost());
