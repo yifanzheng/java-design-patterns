@@ -15,7 +15,7 @@
 - Abstraction：维护了 Implementor 类，两者是聚合关系，Abstraction 充当桥接类。
 - RefinedAbstraction：是 Abstraction 抽象类的子类。
 - Implementor：行为实现类的接口。
-- ConcreteImplementorA/ConcreteImplementorA：行为的具体实现类。
+- ConcreteImplementorA/ConcreteImplementorB：行为的具体实现类。
 
 **桥接模式基本代码**
 
@@ -91,12 +91,10 @@ public class ConcreteImplementorB implements Implementor {
 public class Main {
 
     public static void main(String[] args) {
-        Implementor implementorA = new ConcreteImplementorA();
-        Abstraction refinedAbstractionA = new RefinedAbstraction(implementorA);
+        Abstraction refinedAbstractionA = new RefinedAbstraction(new ConcreteImplementorA());
         refinedAbstractionA.operation();
 
-        Implementor implementorB = new ConcreteImplementorB();
-        Abstraction refinedAbstractionB = new RefinedAbstraction(implementorB);
+        Abstraction refinedAbstractionB = new RefinedAbstraction(new ConcreteImplementorB());
         refinedAbstractionB.operation();
     }
 }
