@@ -11,7 +11,7 @@
 - [原型模式](doc/prototype-pattern.md)
 - [建造者模式](doc/builder-pattern.md)
 
-### 结构型模式（更新中...）
+### 结构型模式
 
 - [适配器模式](doc/adapter-pattern.md)
 - [桥接模式](doc/bridge-pattern.md)
