@@ -75,7 +75,7 @@ public class SubSystemTwo {
 
 因此，我们将使用不同的接口集来处理不同类型的数据库。 然后，客户端应用程序可以使用这些接口来获取所需的数据库连接并生成报告。
 
-**外观设计模式实现**
+**使用外观设计模式实现**
 
 首先，创建两个帮助程序接口，分别是 MySQLHelper 和 SQLServerHelper。
 ```java
@@ -169,8 +169,9 @@ public class HelperFacade {
 ```
 
 最后，创建客户端程序，分别使用 Facade 模式和不使用 Facade 模式生成报告。
+
 ```java
-public class FacadePatternTest {
+public class Client {
 
 	public static void main(String[] args) {
 		String tableName = "Student";

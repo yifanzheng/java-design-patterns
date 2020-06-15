@@ -17,8 +17,8 @@
 - [桥接模式](doc/bridge-pattern.md)
 - [装饰者模式](doc/decorator-pattern.md)
 - [组合模式](doc/composite-pattern.md)
-- [外观模式]()
-- [享元模式]()
+- [外观模式](doc/facade-pattern.md)
+- [享元模式](doc/flyweight-pattern.md)
 - [代理模式]()
 
 ### 行为型模式（更新中...）
