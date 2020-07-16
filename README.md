@@ -2,26 +2,28 @@
 
 Java 设计模式学习笔记，简单易懂，每个模式都有相应的代码示列，帮助学习理解。
 
+在线阅读地址：http://yifanzheng.gitee.io/java-design-patterns
+
 ### 设计原则
 
-- [七大设计原则](doc/design-principle.md)
+- [七大设计原则](docs/design-principle.md)
 
 ### 创建型模式
 
-- [单例模式](doc/singleton-pattern.md)
-- [工厂模式 & 抽象工厂模式](doc/factory-pattern.md)
-- [原型模式](doc/prototype-pattern.md)
-- [建造者模式](doc/builder-pattern.md)
+- [单例模式](docss/singleton-pattern.md)
+- [工厂模式 & 抽象工厂模式](docs/factory-pattern.md)
+- [原型模式](docs/prototype-pattern.md)
+- [建造者模式](docs/builder-pattern.md)
 
 ### 结构型模式
 
-- [适配器模式](doc/adapter-pattern.md)
-- [桥接模式](doc/bridge-pattern.md)
-- [装饰者模式](doc/decorator-pattern.md)
-- [组合模式](doc/composite-pattern.md)
-- [外观模式](doc/facade-pattern.md)
-- [享元模式](doc/flyweight-pattern.md)
-- [代理模式](doc/proxy-pattern.md)
+- [适配器模式](docs/adapter-pattern.md)
+- [桥接模式](docs/bridge-pattern.md)
+- [装饰者模式](docs/decorator-pattern.md)
+- [组合模式](docs/composite-pattern.md)
+- [外观模式](docs/facade-pattern.md)
+- [享元模式](docs/flyweight-pattern.md)
+- [代理模式](docs/proxy-pattern.md)
 
 ### 行为型模式（更新中...）
 
@@ -41,5 +43,3 @@ Java 设计模式学习笔记，简单易懂，每个模式都有相应的代码
 ### 后记
 
 由于自身能力有限，若有错误或者不当之处，还请大家批评指正，一起学习交流！
-
-### 持续更新中...
