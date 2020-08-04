@@ -6,18 +6,18 @@
 
   * [单例模式](docs/singleton-pattern.md)
   * [工厂模式 & 抽象工厂模式](docs/factory-pattern.md)
-  * [原型模式](docs/prototype-pattern.md)
   * [建造者模式](docs/builder-pattern.md)
+  * [原型模式](docs/prototype-pattern.md)
 
 * 结构型模式
 
+  * [代理模式](docs/proxy-pattern.md)
   * [适配器模式](docs/adapter-pattern.md)
   * [桥接模式](docs/bridge-pattern.md)
   * [装饰者模式](docs/decorator-pattern.md)
   * [组合模式](docs/composite-pattern.md)
   * [外观模式](docs/facade-pattern.md)
   * [享元模式](docs/flyweight-pattern.md)
-  * [代理模式](docs/proxy-pattern.md)
 
 * 行为型模式（更新中...）
 
