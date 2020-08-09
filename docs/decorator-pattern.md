@@ -243,6 +243,7 @@ public class AbstractIngredients extends Drink {
 
     @Override
     public float getCost() {
+        // 添加配料需要加钱
         return super.price + this.drink.getCost();
     }
 
@@ -302,6 +303,15 @@ public class Main {
     }
 }
 ```
+### Java IO 中的装饰者模式
+
+装饰器模式在 Java IO 类中使用很多，比如FileInputStream、PipedInputStream、ByteArrayInputStream 等。看下图 InputStream 派生出来的部分类。
+
+![IO](./asset/imgs/io-decorator.png)
+
+我们知道 InputStream 代表了输入流，具体的输入来源可以是文件（FileInputStream）、管道（PipedInputStream）、数组（ByteArrayInputStream）等，这些就像前面咖啡例子中的美式咖啡、无因咖啡，属于基础输入流。
+
+FilterInputStream 是一个装饰接口，它的实现类是一系列装饰器，比如 BufferedInputStream 代表用缓冲来装饰，也就使得输入流具有了缓冲的功能，LineNumberInputStream 代表用行号来装饰，在操作的时候就可以取得行号了，DataInputStream 的装饰，使得我们可以从输入流转换为 Java 中的基本类型值。
 
 ### 小结
 
