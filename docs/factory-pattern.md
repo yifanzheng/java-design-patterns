@@ -1,126 +1,43 @@
-## 工厂模式 & 抽象工厂模式
+## 工厂模式
 
-当我们有一个具有多个子类的超类并且基于不同的输入，需要返回一个子类时，将使用工厂设计模式。这种模式消除了从客户端程序到工厂类的实例化的责任。注意，此模式也称为“工厂方法模式”。
-
-**示例**
-
-实现两数的加、减、乘、除运算。
-
-```java
-/**
- * Operation 运算类
- */
-public class Operation {
-
-    public static double getResult(double numberA, double numberB, String operate) {
-        double result = 0;
-
-        if (Objects.equals(operate, "+")) {
-            result = numberA + numberB;
-        } else if (Objects.equals(operate, "-")) {
-            result = numberA - numberB;
-        } else if (Objects.equals(operate, "*")) {
-            result = numberA * numberB;
-        } else if (Objects.equals(operate, "/")) {
-            result = numberA / numberB;
-        }
-
-        return result;
-    }
-}
-
-
-/**
- * Main
- */
-public class Main {
-
-    public static void main(String[] args) {
-        double numberA = 20;
-        double numberB = 15;
-        String operate = "*";
-
-        double result = Operation.getResult(numberA, numberB, operate);
-
-        System.out.println("计算结果是：" + result);
-    }
-}
-```
-上面的实现方式虽然简单且易于理解，但是当我们再增加一个新的运算（比如立方运算）时，就要对 Operation 类中的运算方法进行修改，这样可能会使得本来运行良好的功能代码发生意外的变化，导致程序发生异常。所以我们需要将代码进行改进。
+一般情况下，工厂模式(Factory Design Pattern)分为三种更细分的类型：简单工厂、工厂方法和抽象工厂。不过，在 GoF 的《设计模式》一书中，将简单工厂模式看作时工厂方法模式的一种特例。
 
 ### 简单工厂模式
 
-简单工厂模式是属于创建型模式，是工厂模式的一种，是由一个工厂对象决定创建出哪一种产品类的实例。简单工厂模式是工厂模式家族中最简单实用的模式。  
-简单工厂模式：定义了一个创建对象的类，由这个类来封装实例化对象的行为(代码)。在软件开发中，当我们会用到大量的创建某种、某类或者某批对象时，就会使用到工厂模式。
+简单工厂模式是工厂模式中最简单的一种模式。下面，我们通过一个例子来解释一下什么是简单工厂模式。
 
-
-**使用简单工厂模式改进**
-
-![简单工厂](./asset/imgs/simple-factory.png)
+下面这段代码中，我们根据运算符（+、-、*、/），选择不同的运算操作，得到运算结果。
 
 ```java
-/**
- * Operation
- */
-public interface Operation {
+public class Calculation {
 
-    double getResult(double numberA, double numberB);
-}
-
-/**
- * OperationAdd 加法运算
- */
-public class OperationAdd implements Operation {
-
-    @Override
-    public double getResult(double numberA, double numberB) {
-        return numberA + numberB;
-    }
-}
-
-/**
- * OperationSub 减法运算
- */
-public class OperationSub implements Operation {
-
-    @Override
-    public double getResult(double numberA, double numberB) {
-        return numberA - numberB;
-    }
-}
-
-/**
- * OperationMul 乘法运算
- */
-public class OperationMul implements Operation {
-
-    @Override
-    public double getResult(double numberA, double numberB) {
-        return numberA * numberB;
-    }
-}
-
-/**
- * OperationDiv 除法运算
- */
-public class OperationDiv implements Operation {
-
-    @Override
-    public double getResult(double numberA, double numberB) {
-        if (numberB == 0) {
-            throw new ArithmeticException("除数不能为 0！");
+    private double getResult(String operation, double numA, double numB) {
+        Operation operation = null;
+        if (Objects.equals(operate, "+")) {
+            operation = new OperationAdd();
+        } else if (Objects.equals(operate, "-")) {
+            operation = new OperationSub();
+        } else if (Objects.equals(operate, "*")) {
+            operation = new OperationMul();
+        } else if (Objects.equals(operate, "/")) {
+            operation = new OperationDiv();
+        } else {
+            throw new InvalidOperationException("Operation not supported: " + operation);
         }
-        return numberA / numberB;
+        // 使用运算器计算结果
+        double result = operation.getResult(numberA, numberB);
+        return result;
     }
 }
+``` 
+上面这段代码，我们还可以进一步改进。为了让代码逻辑更清晰，可读性更好，同时保证类的职责更加单一，我们可以功能独立的代码块封装成函数，并将此函数抽离到一个独立的类中。按照这个思路，我们可以将代码中涉及 Operation 创建的部分封装成独立的函数，并将其抽离到一个单独的类中，而这个类就是简单工厂模式类。改进后的代码如下所示：
 
-/**
- * SimpleFactory
- */
-public class SimpleFactory {
+```java
+public class OperationFactory {
+
+    private OperationFactory() { }
 
     public static Operation newOperation(String operate) {
-
         Operation operation = null;
         if (Objects.equals(operate, "+")) {
             operation = new OperationAdd();
@@ -135,93 +52,46 @@ public class SimpleFactory {
         return operation;
     }
 }
+```
+从上面的方法中，我们可以知道，如果我们需要添加新的运算符操作 operation（比如，%），那势必要改动 OperationFactory 的代码，这样就违背了开放封闭原则。实际上，如果我们能确定不需要频繁地向 OperationFactory 的代码中添加新的 operation，只是偶尔会改动一下，稍微不符合开放封闭原则，也是可以接受的。
 
-/**
- * Main
- */
-public class Main {
+其次，上面方法中有一组 if 分支，我们也可以使用一个 Map 先将 operation 对象创建好缓存起来，我们要使用的时候，就直接从 Map 中取出来。这样不仅消除了 if 分支，还达到了缓存的作用。具体代码实现如下所示：
 
-    public static void main(String[] args) {
-        double numberA = 20;
-        double numberB = 15;
-        String operate = "*";
+```java
+public class OperationFactory {
 
-        Operation operation = SimpleFactory.newOperation(operate);
-        double result = operation.getResult(numberA, numberB);
+    private static final Map<String, Operation> operationMap = new HashMap<>();
 
-        System.out.println(result);
+    static {
+        operationMap.put("+", new OperationAdd());
+        operationMap.put("-", new OperationSub());
+        operationMap.put("*", new OperationMul());
+        operationMap.put("/", new OperationDiv());
+    }
+
+    private OperationFactory() { }
+
+    public static Operation newOperation(String operate) {
+       if (operate == null || operate.isEmpty()) {
+          return null;
+       }
+
+        return operationMap.get(operate);
     }
 }
-``` 
+```
 
-如果我们需要对其中的运算进行修改，只需修改它相应的运算类即可；如果需要增加新的运算方式，只需增加相应的运算子类，然后在工厂类里增加一个判断分支，添加相应的实例化代码。
+实际上，如果 if 分支不是很多，代码中的 if 分支是完全可以接受的。在实际开发中，可以使用多态来替代 if 分支，这也不是没有缺点，它虽然提高了代码的扩展性，更加符合开放封闭原则，但也增加了类的个数，牺牲了代码的可读性。尽管简单工厂模式的代码实现中，有多处 if 分支，违背开放封闭原则，但权衡扩展性和可读性，这样的代码实现在大多数情况下是可以接受的。
 
-简单工厂模式的最大优点在于工厂类中包含了必要的逻辑判断，根据客户端的选择条件动态实例化相关的类，对于客户端来说，去除了与具体产品的依赖。但是每当要增加一个新的功能时，都要到工厂类的方法里增加一个分支条件，这样就违背了开放封闭原则。
+### 工厂方法模式  
 
-### 工厂模式  
-
-工厂模式（Factory Method），定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂模式使一个类的实例化延迟到其子类。
+上面我们已经提到，可以使用多态来替代 if 分支。而工厂方法模式，恰恰就是利用了多态。具体代码实现如下：
 
 **使用工厂模式改进**
 
 ![工厂方法](./asset/imgs/factory-method.png)
 
 ```java
-/**
- * Operation
- */
-public interface Operation {
-
-    double getResult(double numberA, double numberB);
-}
-
-/**
- * OperationAdd 加法运算
- */
-public class OperationAdd implements Operation {
-
-    @Override
-    public double getResult(double numberA, double numberB) {
-        return numberA + numberB;
-    }
-}
-
-/**
- * OperationSub 减法运算
- */
-public class OperationSub implements Operation {
-
-    @Override
-    public double getResult(double numberA, double numberB) {
-        return numberA - numberB;
-    }
-}
-
-/**
- * OperationMul 乘法运算
- */
-public class OperationMul implements Operation {
-
-    @Override
-    public double getResult(double numberA, double numberB) {
-        return numberA * numberB;
-    }
-}
-
-/**
- * OperationDiv 除法运算
- */
-public class OperationDiv implements Operation {
-
-    @Override
-    public double getResult(double numberA, double numberB) {
-        if (numberB == 0) {
-            throw new ArithmeticException("除数不能为 0！");
-        }
-        return numberA / numberB;
-    }
-}
-
 /**
  * IFactory
  */
@@ -299,26 +169,13 @@ public class OperateFactoryMaker {
             return new DivFactory();
         }
 
-        throw new IllegalArgumentException("OperateType not supported.");
+        throw new InvalidOperationException("Operate type not supported");
     }
-
-/**
- * Main
- */
-public class Main {
-
-    public static void main(String[] args) {
-        double numberA = 20;
-        double numberB = 15;
-        Operation operation = OperateFactoryMaker.makeFactory(OperateType.MUL).newOperation();
-        double result = operation.getResult(numberA, numberB);
-
-        System.out.println(result);
-    }
-}
+｝
 ```
+使用工厂方法模式时，当我们新增一种 operation 的时候，只需要新增一个实现了 IFactory 接口的 Factory 类即可。所以，工厂方法模式比起简单工厂模式更加符合开闭原则。
 
-工厂模式克服了简单工厂模式违背开放封闭原则的缺点，又保持了封装对象创建过程的优点。它们都是集中封装了对象的创建，使得要更换对象时，不需要做大的改动就可实现，降低了客户程序与产品对象的耦合。工厂模式是简单工厂模式的进一步抽象和推广。由于使用了多态性，工厂方法模式保持了简单工厂模式的优点，而且克服了它的缺点。但缺点是由于每加一个产品，就需要加一个产品工厂的类，增加了额外的开发量。
+这里出现了 OperateFactoryMaker 类，它其实是 OperationFactory 的工厂类，即工厂的工厂。虽然我们解决了之前的 if 分支，但是这里也引入了新的 if 分支。同时，工厂方法模式出现了很多 Factory 类，增加了代码的复杂性。每当我们要新增加一个 operation 操作时，都要创建对应的工厂类。
 
 ### 抽象工厂模式  
 
