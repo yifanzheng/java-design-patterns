@@ -11,7 +11,7 @@ Java 设计模式学习笔记，简单易懂，每个模式都有相应的代码
 ### 创建型模式
 
 - [单例模式](docss/singleton-pattern.md)
-- [工厂模式 & 抽象工厂模式](docs/factory-pattern.md)
+- [工厂模式](docs/factory-pattern.md)
 - [建造者模式](docs/builder-pattern.md)
 - [原型模式](docs/prototype-pattern.md)
 
