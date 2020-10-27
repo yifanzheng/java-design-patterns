@@ -1,134 +1,30 @@
 ## 桥接模式
 
-桥接模式(Bridge)，将抽象部分和它的实现部分分离，使它们都可以独立地变化。  
+桥接模式(Bridge Design Pattern)，将抽象部分和它的实现部分分离，使它们都可以独立地变化。  
 
 桥接模式基于类的最小设计原则，通过使用封装、聚合及继承等行为让不同的类承担不同的职责。它的主要特点是把抽象与行为实现分离开来，从而可以保持各部分的独立性以及应对它们的功能扩展。
 
 也就是说，实现系统可能有多种方式分类，每一种分类都有可能变化。桥接模式的核心意图就是把这些分类独立出来，让它们各自独立变化，减少它们之间的耦合。
 
-### 桥接模式解析
+### 桥接模式应用举例
 
-![桥接模式结构图](./asset/imgs/bridge-struct.png)
+为了更直观的理解什么是桥接模式，我们来看看这个例子：手机操作问题，对不同品牌手机的不同软件功能进行编程，如通讯录、手机游戏等。
 
-**角色介绍**
-
-- Abstraction：维护了 Implementor 类，两者是聚合关系，Abstraction 充当桥接类。
-- RefinedAbstraction：是 Abstraction 抽象类的子类。
-- Implementor：行为实现类的接口。
-- ConcreteImplementorA/ConcreteImplementorB：行为的具体实现类。
-
-**桥接模式基本代码**
-
-- Abstraction 类
-
-```java
-public abstract class Abstraction {
-
-    private Implementor implementor;
-
-    public Abstraction(Implementor implementor) {
-        this.implementor = implementor;
-    }
-
-    protected void operation() {
-        implementor.operation();
-    }
-}
-```
-
-- RefinedAbstraction 类
-
-```java
-public class RefinedAbstraction extends Abstraction {
-
-    public RefinedAbstraction(Implementor implementor) {
-        super(implementor);
-    }
-
-    @Override
-    protected void operation() {
-        super.operation();
-    }
-}
-```
-
-- Implementor 类
-
-```java
-public interface Implementor {
-
-    void operation();
-}
-```
-
-- ConcreteImplementorA 类
-
-```java
-public class ConcreteImplementorA implements Implementor {
-
-    @Override
-    public void operation() {
-        System.out.println("具体实现 A 的方法执行");
-    }
-}
-```
-
-- ConcreteImplementorB 类
-
-```java
-public class ConcreteImplementorB implements Implementor {
-
-    @Override
-    public void operation() {
-        System.out.println("具体实现 B 的方法执行");
-    }
-}
-```
-
-- Main 类
-
-```java
-public class Main {
-
-    public static void main(String[] args) {
-        Abstraction refinedAbstractionA = new RefinedAbstraction(new ConcreteImplementorA());
-        refinedAbstractionA.operation();
-
-        Abstraction refinedAbstractionB = new RefinedAbstraction(new ConcreteImplementorB());
-        refinedAbstractionB.operation();
-    }
-}
-```
-
-### 示例
-
-手机操作问题，对不同品牌手机的不同软件功能进行编程，如通讯录、手机游戏等。
-
-**传统方法**
-
-- 结构图
-
-![代码结构图](./asset/imgs/bridge-code-struct.png)
-
-- 手机类
+我们先来看最简单、最直接的一种实现方式。代码如下所示：
 
 ```java
 /**
- * AbstractHandset
+ * Handset
  */
-public abstract class AbstractHandset {
+public abstract class Handset {
 
     public abstract void run();
 }
-```
 
-- 手机品牌 M 和手机品牌 N 类
-
-```java
 /**
  * HandsetM
  */
-public abstract class HandsetM extends AbstractHandset {
+public abstract class HandsetM extends Handset {
 
 
 }
@@ -136,14 +32,10 @@ public abstract class HandsetM extends AbstractHandset {
 /**
  * HandsetN
  */
-public abstract class HandsetN extends AbstractHandset {
+public abstract class HandsetN extends Handset {
     
 }
-```
 
-- 手机游戏类和手机 MP3 类
-
-```java
 /**
  * HandsetMGame
  */
@@ -187,11 +79,7 @@ public class HandsetNMP3 extends HandsetN {
         System.out.println("运行 N 品牌手机的 MP3");
     }
 }
-```
 
-- Main 类
-
-```java
 /**
  * Main
  */
@@ -207,17 +95,13 @@ public class Main {
 }
 ```
 
-传统方法使用多层继承的方案，在扩展上存在**类爆炸**的问题。当我们要给每个品牌的手机增加一个新功能时，就要在每个品牌的手机下面增加一个子类，这样增加了代码维护的成本。
+这种方式有一个明显的问题，那就是使用多层次继承，在扩展上存在**类爆炸**的问题。当我们要给每个品牌的手机增加一个新功能时，就要在每个品牌的手机下面增加一个子类，这样增加了代码维护的成本。
 
 事实上，很多情况下使用继承会带来麻烦。对象的继承关系是在编译时就定义好了的，所以无法在运行时改变从父类继承的实现。子类的实现与它的父类有非常紧密的依赖关系，以至于父类实现中的任何变化必然导致其子类发生变化。当需要复用子类时，如果继承下来的实现不适合解决新的问题，则父类必须重写或被其他更适合的类替换。这种依赖关系限制了灵活性并最终限制复用。
 
+针对上面的代码，我们可以将手机的不同功能软件（MP3、Game 等）逻辑剥离出来，形成独立手机软件类(HandsetSoft 相关类)。其中，Handset 类相当于抽象，HandsetSoft 类相当于实现，两者可以独立开发，通过组合关系(也就是桥梁)任意组合在一起。所谓任意组合的意思就是，不同品牌的手机和手机功能软件之间的对应关系，不是在代码中固定写死的，我们可以动态地去指定。
+
 **使用桥接模式改进**
-
-- 结构图
-
-![桥接结构图](./asset/imgs/bridge-code-struct1.png)
-
-- 手机软件类
 
 ```java
 /**
@@ -227,10 +111,7 @@ public interface HandsetSoft {
 
     void run();
 }
-```
-- 手机功能等具体类
 
-```java
 /**
  * HandsetGame
  */
@@ -252,33 +133,25 @@ public class HandsetMP3 implements HandsetSoft {
         System.out.println("运行手机 MP3");
     }
 }
-```
 
-- 手机类
-
-```java
 /**
- * AbstractHandset
+ * Handset
  */
-public abstract class AbstractHandset {
+public abstract class Handset {
 
     protected HandsetSoft handsetSoft;
 
-    public AbstractHandset(HandsetSoft handsetSoft) {
+    public Handset(HandsetSoft handsetSoft) {
         this.handsetSoft = handsetSoft;
     }
 
     public abstract void run();
 }
-```
 
-- 手机具体品牌类
-
-```java
 /**
  * HandsetM
  */
-public class HandsetM extends AbstractHandset {
+public class HandsetM extends Handset {
 
     public HandsetM(HandsetSoft handsetSoft) {
         super(handsetSoft);
@@ -293,7 +166,7 @@ public class HandsetM extends AbstractHandset {
 /**
  * HandsetN
  */
-public class HandsetN extends AbstractHandset {
+public class HandsetN extends Hand'se't {
 
     public HandsetN(HandsetSoft handsetSoft) {
         super(handsetSoft);
@@ -304,29 +177,20 @@ public class HandsetN extends AbstractHandset {
         this.handsetSoft.run();
     }
 }
+
+// 可以对不同品牌的手机组合不同的功能，灵活性提高
+HandsetM handsetM = new HandsetM(new HandsetGame());
+handsetM.run();
+
+HandsetN handsetN = new HandsetN(new HandsetMP3());
+handsetN.run();
 ```
 
-- Main 类
+### 总结
 
-```java
-/**
- * Main
- */
-public class Main {
+桥接模式，实现了抽象和实现部分的分离，达到**解耦**的目的，从而极大的提供了系统的灵活性，让抽象部分和实现部分独立开来，这有助于系统进行分层设计，从而产生更好的结构化系统。对于系统的高层部分，只需要知道抽象部分和实现部分的接口就可以了，其它的部分由具体业务来完成。
 
-    public static void main(String[] args) {
-        HandsetM handsetM = new HandsetM(new HandsetGame());
-        handsetM.run();
-
-        HandsetN handsetN = new HandsetN(new HandsetMP3());
-        handsetN.run();
-    }
-}
-```
-
-### 小结
-
-桥接模式，实现了抽象和实现部分的分离，达到**解耦**的目的，从而极大的提供了系统的灵活性，让抽象部分和实现部分独立开来，这有助于系统进行分层设计，从而产生更好的结构化系统。对于系统的高层部分，只需要知道抽象部分和实现部分的接口就可以了，其它的部分由具体业务来完成。**桥接模式替代多层继承方案，可以减少子类的个数，降低系统的管理和维护成本**。
+桥接模式通过组合关系来替代继承关系，避免继承层次引起的类爆炸，降低系统的管理和维护成本。这类似《Effective Java》一书中提倡的”组合优于继承“设计原则。
 
 桥接模式要求正确识别出系统中两个独立变化的维度(抽象和实现)，因此其使用范围有一定的局限性，即需要有这样的应用场景。
 
