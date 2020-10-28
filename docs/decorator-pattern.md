@@ -4,145 +4,9 @@
 
 ### 装饰者模式解析
 
-![装饰者模式结构图](./asset/imgs/decorator-struct.png)
+老规矩，我们先来看看这样一样例子：咖啡订单程序，咖啡种类有美式咖啡（American coffee）、无因咖啡（Causeless coffee），配料有牛奶（Milk），巧克力（Chocolate）。客户在点咖啡时可以选择配料进行混合。
 
-**角色介绍**
-
-- Component：定义一个对象接口，可以给这些对象动态地添加功能。
-
-- ConcreteComponent：是定义了一个具体的对象，也可以给这个对象添加一些功能。
-
-- Decorator：装饰抽象类，继承了 Component，从外类来扩展 Component 类的功能，但对于 Component 来说，是无需知道 Decorator 的存在的.
-
-- ConcreteDecorator(A/B)：具体的装饰对象，起到给 Component 添加功能的作用。
-
-**装饰者模式基本代码**
-
-- Component 类
-
-```java
-/**
- * Component
- */
-public interface Component {
-
-    void operation();
-}
-```
-
-- ConcreteComponent 类
-
-```java
-/**
- * @author star
- */
-public class ConcreteComponent implements Component {
-
-    @Override
-    public void operation() {
-        System.out.println("具体的操作");
-    }
-}
-```
-
-- Decorator 类
-
-```java
-/**
- * Decorator
- */
-public abstract class Decorator implements Component {
-
-    protected Component component;
-
-    public Decorator(Component component) {
-        this.component = component;
-    }
-
-    @Override
-    public void operation() {
-        if (this.component == null) {
-            return;
-        }
-        // 执行功能
-        this.component.operation();
-    }
-}
-```
-
-- ConcreteDecoratorA 类
-
-```java
-/**
- * ConcreteDecoratorA
- */
-public class ConcreteDecoratorA extends Decorator {
-
-    public ConcreteDecoratorA(Component component) {
-        super(component);
-    }
-
-    @Override
-    public void operation() {
-        // 执行原 Component 对象的功能
-        super.operation();
-        // 执行本类的功能
-        System.out.println("装饰者 A 的操作");
-    }
-}
-```
-
-- ConcreteDecoratorB 类
-
-```java
-/**
- * ConcreteDecoratorB
- */
-public class ConcreteDecoratorB extends Decorator {
-
-    public ConcreteDecoratorB(Component component) {
-        super(component);
-    }
-
-    @Override
-    public void operation() {
-        // 执行原 Component 对象的功能
-        super.operation();
-        // 执行本类的功能
-        System.out.println("装饰者 B 的操作");
-    }
-}
-```
-
-- Main 类
-
-```java
-/**
- * Main
- */
-public class Main {
-
-    public static void main(String[] args) {
-        // 装饰组件
-        ConcreteDecoratorB decoratorB = new ConcreteDecoratorB(new ConcreteDecoratorA(new ConcreteComponent()));
-
-        decoratorB.operation();
-    }
-}
-```
-
-### 示例
-
-咖啡订单程序，咖啡种类有美式咖啡（American coffee）、无因咖啡（Causeless coffee），配料有牛奶（Milk），巧克力（Chocolate）。客户在点咖啡时可以选择配料进行混合。使用装饰者模式编程代码。
-
-**类结构图**
-
-![装饰者模式类结构图](./asset/imgs/decorator-code-struct.png)
-
-
-**编码**
-
-- Drink 类
+下面我们使用装饰器模式实现这个例子，具体代码如下：
 
 ```java
 /**
@@ -174,11 +38,7 @@ public abstract class Drink {
         this.price = price;
     }
 }
-```
 
-- Cafe 类
-
-```java
 /**
  * Cafe
  */
@@ -195,10 +55,7 @@ public class Cafe extends Drink {
     }
 
 }
-```
-- AmericanCafe 类
 
-```java
 /**
  * AmericanCafe
  */
@@ -210,11 +67,7 @@ public class AmericanCafe extends Cafe {
     }
 
 }
-```
 
-- CauselessCafe 类
-
-```java
 /**
  * CauselessCafe
  */
@@ -225,11 +78,7 @@ public class CauselessCafe extends Cafe {
         this.price = 7.0f;
     }
 }
-```
 
-- AbstractIngredients 类
-
-```java
 /**
  * AbstractIngredients
  */
@@ -252,11 +101,7 @@ public class AbstractIngredients extends Drink {
         return drink.getDescription() + "配料：" + this.name + " 价格：" + this.price ;
     }
 }
-```
 
-- Milk 类
-
-```java
 /**
  * Milk
  */
@@ -268,12 +113,9 @@ public class Milk extends AbstractIngredients {
         this.price = 3.0f;
     }
 }
-```
-- Chocolate 类
 
-```java
 /**
- * @author star
+ * Chocolate
  */
 public class Chocolate extends AbstractIngredients {
 
@@ -283,26 +125,17 @@ public class Chocolate extends AbstractIngredients {
         this.price = 2.0f;
     }
 }
+
+// 使用举例：牛奶巧克力美式咖啡
+Drink drink = new Chocolate(new Milk(new AmericanCafe()));
 ```
 
-- Main 类
+看了上面的代码，小伙伴们是不是又看到了“组合原则”的影子。但是装饰器模式相对于简单的组合关系，还有两个比较特殊的地方。
 
-```java
-/**
- * Main
- */
-public class Main {
+第一个比较特殊的地方是：**装饰器类和原始类继承相同的父类，这样我们可以对原始类“嵌套”多个装饰器类**。就像上面代码中的使用例子一样：`new Chocolate(new Milk(new AmericanCafe()))`。
 
-    public static void main(String[] args) {
-        // 牛奶巧克力美式咖啡
-        Drink drink = new Chocolate(new Milk(new AmericanCafe()));
+第二个比较特殊的地方是：**装饰器类是对功能的增强，这也是装饰器模式应用场景的一个重要特点**。实际上，符合“组合原则”这种代码结构的设计模式有很多，比如代理模式、桥接模式，还有现在的装饰器模式。尽管它们的代码结构很相似，但是每种设计模式的意图是不同的。就拿比较相似的代理模式和装饰器模式来说：代理模式中，代理类附加的是跟原始类无关的功能；而在装饰器模式中，装饰器类附加的是跟原始类相关的增强功能。
 
-        System.out.println(drink.getDescription());
-        System.out.println(drink.getCost());
-        
-    }
-}
-```
 ### Java IO 中的装饰者模式
 
 装饰器模式在 Java IO 类中使用很多，比如FileInputStream、PipedInputStream、ByteArrayInputStream 等。看下图 InputStream 派生出来的部分类。
@@ -313,7 +146,7 @@ public class Main {
 
 FilterInputStream 是一个装饰接口，它的实现类是一系列装饰器，比如 BufferedInputStream 代表用缓冲来装饰，也就使得输入流具有了缓冲的功能，LineNumberInputStream 代表用行号来装饰，在操作的时候就可以取得行号了，DataInputStream 的装饰，使得我们可以从输入流转换为 Java 中的基本类型值。
 
-### 小结
+### 总结
 
 一般情况下，当系统需要新功能的时候，是向旧的类中添加新的代码。这些新加的代码通常装饰了原有类的核心职责或主要行为，但这种做法的问题在于，它们在主类中加入了新的字段，新的方法和新的逻辑，从而增加了主类的复杂度，而这些新加入的东西仅仅是为了满足一些只在某种特定情况下才执行的特殊行为的需要。  
 
