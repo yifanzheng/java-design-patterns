@@ -12,9 +12,9 @@
 * 结构型模式
 
   * [代理模式](docs/proxy-pattern.md)
-  * [适配器模式](docs/adapter-pattern.md)
   * [桥接模式](docs/bridge-pattern.md)
-  * [装饰者模式](docs/decorator-pattern.md)
+  * [装饰器模式](docs/decorator-pattern.md)
+  * [适配器模式](docs/adapter-pattern.md)
   * [外观模式](docs/facade-pattern.md)
   * [组合模式](docs/composite-pattern.md)
   * [享元模式](docs/flyweight-pattern.md)
