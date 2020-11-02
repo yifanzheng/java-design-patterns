@@ -1,130 +1,18 @@
 ## 组合模式
 
-组合模式(Composite)，将对象组合成树形结构以表示“部分-整体”的层次结构。组合模式使得用户对单个对象和组合对象的使用具有一致性。
+组合模式(Composite Design Pattern)，将对象组合成树形结构以表示“部分-整体”的层次结构。组合模式使得用户可以统一单个对象和组合对象的处理逻辑。
+
+组合模式跟面向对象设计中的“组合关系（通过组合来组装两个类）”，完全是两码事。这里讲的“组合模式”，主要是用来处理树形结构数据。这里的“数据”，你可以简单理解为一组对象集合。
+
+正因为其应用场景的特殊性，数据必须能表示成树形结构，这也导致了这种模式在实际的项目开发中并不那么常用。但是，一旦数据满足树形结构，应用这种模式就能发挥很大的作用，能让代码变得非常简洁。
 
 ### 组合模式解析
 
-![composite-struct](./asset/imgs/composite-struct.png)
+接下来，对于组合模式，我们举个例子来解释一下。
 
-**角色介绍**
+假设有这样一个例子：设计一个类来表示一个学校院系结构，一个学校有多个学院，一个学院有多个专业。在控制台中打印出组织关系。
 
-- Component：组合中的对象声明接口，在适当情况下，实现所有类共有接口的默认行为。声明一个接口用于访问和管理 Component 的子部件。
-
-- Leaf：在组合中表示叶节点对象，叶节点没有子节点。
-
-- Composite：定义有枝节点行为，用来存储子部件，在 Component 接口中实现与子部件有关的操作，比如增加 Add 和删除 Remove。
-
-**组合模式基本代码**
-
-- Component 类
-
-```java
-/**
- * Component
- */
-public abstract class Component {
-
-    private String name;
-
-    public Component(String name) {
-        this.name = name;
-    }
-
-    public abstract void add(Component component);
-
-    public abstract void remove(Component component);
-
-    public abstract void display();
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-}
-
-```
-
-- Composite 类
-
-```java
-/**
- * Composite
- */
-public class Composite extends Component {
-    /**
-     * 存放子节点
-     */
-    List<Component> childCompoents = new LinkedList<>();
-
-    public Composite(String name) {
-        super(name);
-    }
-
-    @Override
-    public void add(Component component) {
-        this.childCompoents.add(component);
-    }
-
-    @Override
-    public void remove(Component component) {
-        this.childCompoents.remove(component);
-    }
-
-    @Override
-    public void display() {
-        System.out.println("========" + this.getName() + "==========");
-        // 遍历子节点
-        for (Component c : childCompoents) {
-            c.display();
-        }
-    }
-}
-```
-
-- Leaf 类
-
-```java
-/**
- * Leaf
- */
-public class Leaf extends Component {
-
-    public Leaf(String name) {
-        super(name);
-    }
-
-    @Override
-    public void add(Component component) {
-        throw new IllegalStateException("Cannot add to a leaf");
-    }
-
-    @Override
-    public void remove(Component component) {
-        throw new IllegalStateException("Cannot remove from a leaf");
-    }
-
-    @Override
-    public void display() {
-        // 只打印叶子节点，叶子节点没有子节点
-        System.out.println(this.getName());
-    }
-}
-```
-
-### 示例
-
-展示一个学校院系结构，一个学校有多个学院，一个学院有多个专业。
-
-**类结构图**
-
-![composite-code-struct](./asset/imgs/composite-code-struct.png)
-
-**编码**
-
-- OrganizationComponent 类
+具体代码如下：
 
 ```java
 /**
@@ -153,13 +41,9 @@ public abstract class OrganizationComponent {
 	}
 	
 }
-```
 
-- University 类
-
-```java
 /**
- * University 就是 Composite , 可以管理 College
+ * University
  */
 public class University extends OrganizationComponent {
 
@@ -189,11 +73,7 @@ public class University extends OrganizationComponent {
 	}
 
 }
-```
 
-- College 类
-
-```java
 /**
  * College 学院
  */
@@ -228,13 +108,8 @@ public class College extends OrganizationComponent {
 			organizationComponent.print();
 		}
 	}
-
 }
-```
 
-- Department 类
-
-```java
 /**
  * Department
  */
@@ -259,11 +134,8 @@ public class Department extends OrganizationComponent {
 		System.out.println(this.getName());
 	}
 }
-```
 
-- Main 类
-
-```java
+// 使用举例
 public class Main {
 
 	public static void main(String[] args) {
@@ -285,12 +157,13 @@ public class Main {
 	}
 }
 ```
+在上面的代码实现中，对于各组织的打印，也就是 print() 函数，实际上这就是树上的递归遍历算法。对于 Department，我们直接打印其名字。对于 University，我们遍历 University 中每个 College 以及 Department，递归打印出它们的名字。
 
-### 小结
+实际上，组合模式的设计思路，与其说是一种设计模式，不如说是对业务场景的一种数据结构与算法的抽象。其中，数据可以表示成树这种数据结构，业务需求可以通过在树上的递归算法类实现。
 
-在组合模式中，基本对象可以被组合成更复杂的组合对象，而这个组合对象又可以被组合，这样不断地递归下去，客户代码中，任何用到基本对象的地方都可以使用组合对象了。用户是不用关心到底是处理一个叶节点还是处理一个组合组件，也就用不着为定义组合而写一些选择判断语句了。组合模式让客户可以一致地使用组合结构和单个对象。
+### 总结
 
-如果你发现需求中是体现部分与整体层次的结构时，以及你希望用户可以忽略组合对象与单个对象的不同，统一地使用组合结构中的所有对象时，就应该考虑用组合模式了。简单地说，组合模式用于描述具有层次结构的数据。
+组合模式，将一组对象组织成树形结构，将单个对象和组合对象都看做树中的节点，以统一处理逻辑，并且它利用树形结构的特点，递归地处理每个子树，依次简化代码实现。使用组合模式的前提在于，你的业务场景必须能够表示成树形结构。所以，组合模式的应用场景也比较局限，它并不是一种很常用的设计模式。
 
 
 
