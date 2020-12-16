@@ -6,7 +6,9 @@ Java 设计模式学习笔记，简单易懂，每个模式都有相应的代码
 
 ### 设计原则
 
-- [七大设计原则](docs/design-principle.md)
+- [单一职责原则](docs/srp.md)
+- [开闭原则](docs/ocp.md)
+- [里式替换原则](docs/lsp.md)
 
 ### 创建型模式
 
