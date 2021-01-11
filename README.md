@@ -12,12 +12,16 @@ Java 设计模式学习笔记，简单易懂，每个模式都有相应的代码
 
 ### 创建型模式
 
+作用：将创建与使用代码解耦
+
 - [单例模式](docss/singleton-pattern.md)
 - [工厂模式](docs/factory-pattern.md)
 - [建造者模式](docs/builder-pattern.md)
 - [原型模式](docs/prototype-pattern.md)
 
 ### 结构型模式
+
+作用：将不同的功能代码解耦
 
 - [代理模式](docs/proxy-pattern.md)
 - [桥接模式](docs/bridge-pattern.md)
@@ -29,7 +33,9 @@ Java 设计模式学习笔记，简单易懂，每个模式都有相应的代码
 
 ### 行为型模式（更新中...）
 
-- [观察者模式]()
+作用：将不同的行为代码解耦
+
+- [观察者模式](docs/observer-pattern.md)
 - [模板方法模式](docs/template-method-pattern.md)
 - [职责链模式]()
 - [命令模式]()
