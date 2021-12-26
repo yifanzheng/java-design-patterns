@@ -1,6 +1,11 @@
 * 设计原则
 
-  * [七大设计原则](docs/design-principle.md)
+  * [单一职责原则](docs/srp.md)
+  * [开放封闭原则](docs/ocp.md)
+  * [里式替换原则](docs/lsp.md)
+  * [接口隔离原则](docs/isp.md)
+  * [依赖倒置原则](docs/dip.md)
+  * [迪米特法则](docs/lod.md)
 
 * 创建型模式
 
@@ -21,6 +26,7 @@
 
 * 行为型模式（更新中...）
 
+  * [观察者模式](docs/observer-pattern.md)
   * [模板方法模式](docs/template-method-pattern.md)
   
   <!--  * [命令模式]()
